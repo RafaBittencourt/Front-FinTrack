@@ -17,6 +17,13 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      boxShadow: {
+        'premium': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+        'premium-hover': '0 8px 30px -4px rgba(0, 0, 0, 0.1)',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -34,6 +41,14 @@ module.exports = {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',

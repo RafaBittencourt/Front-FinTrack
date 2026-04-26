@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+/** Em dev, pedidos vão para a mesma origem do Vite e o `server.proxy` encaminha `/api` → API (evita CORS). */
 export const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://api.fintrack.app' : 'https://localhost:44300/',
+  baseURL: import.meta.env.PROD ? 'https://api.fintrack.app' : '/',
 })
