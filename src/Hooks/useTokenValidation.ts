@@ -10,7 +10,7 @@ export const useTokenValidation = () => {
       const token = localStorage.getItem('token')
 
       if (!token || !expireTime) {
-        navigate('/login')
+        navigate('/sign-in')
         return
       }
 
@@ -20,7 +20,7 @@ export const useTokenValidation = () => {
       if (now >= expireTimestamp) {
         localStorage.removeItem('token')
         localStorage.removeItem('expireTime')
-        navigate('/login')
+        navigate('/sign-in')
       }
     }
 

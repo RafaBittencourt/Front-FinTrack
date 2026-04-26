@@ -15,7 +15,7 @@ export function AppLayout() {
 
         <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
           {/* Mobile Header */}
-          <header className="flex h-14 items-center gap-4 border-b bg-white px-4 lg:hidden shrink-0">
+          <header className="flex h-14 items-center gap-4 border-b bg-white/80 backdrop-blur-md px-4 lg:hidden shrink-0 z-10 sticky top-0">
             <SidebarTrigger>
               <div className="flex h-9 w-9 items-center justify-center rounded-md border bg-white shadow-sm hover:bg-slate-50 transition-colors">
                 <Menu size={20} className="text-slate-600" />

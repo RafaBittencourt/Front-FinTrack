@@ -1,11 +1,10 @@
-import { Landmark, Pencil, Plus, Wallet } from 'lucide-react'
+import { Landmark, Pencil, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
@@ -20,7 +19,6 @@ import { CreateAsync, GetAsync, UpdateAsync } from '@/lib/crud'
 import { IResponseError } from '@/lib/interface'
 
 import { ContaFormValues } from './interface'
-import { useUserData } from '@/context/userContext'
 import { InputSelect } from '@/components/InputSelect/InputSelect'
 
 interface IContaFormProps {
@@ -43,8 +41,6 @@ export function ContaForm({
   dataId,
   urlToRequest,
 }: IContaFormProps) {
-  const { checkPermission } = useUserData()
-
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [isOpen, setIsOpen] = useState(false)
 

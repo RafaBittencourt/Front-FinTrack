@@ -11,7 +11,7 @@ import {
   Users,
   Wallet
 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -45,6 +45,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
@@ -70,9 +71,29 @@ interface MenuCategory {
   menu: MenuItem[]
 }
 
+function avatarUrlFromSeed(seed: string) {
+  const name = seed.trim() || 'FinTrack'
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name.slice(0, 64))}&background=047857&color=f0fdf4&size=128&bold=true`
+}
+
 export function AppSidebar() {
-  const { setToken, nomeUsuario, checkPermission } = useUserData()
+  const {
+    setToken,
+    nomeUsuario,
+    emailUsuario,
+    loginUsuario,
+    profileUrl,
+    checkPermission,
+  } = useUserData()
   const navigate = useNavigate()
+
+  const profileAvatarSrc = useMemo(() => {
+    const fromApi = profileUrl?.trim()
+    if (fromApi) return fromApi
+    return avatarUrlFromSeed(nomeUsuario || loginUsuario || emailUsuario || '')
+  }, [profileUrl, nomeUsuario, loginUsuario, emailUsuario])
+
+  const linhaSecundaria = emailUsuario || loginUsuario || ''
 
   const menuItems: MenuCategory[] = [
     {
@@ -291,29 +312,52 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-emerald-900/30 p-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center gap-3 rounded-lg p-2 transition-all duration-300 hover:bg-emerald-500/10 cursor-pointer group">
-              <div>
-                <Avatar className="h-9 w-9 rounded-md border border-emerald-500/20">
-                  <AvatarImage
-                    src=""
-                    className="h-full w-full rounded-md object-cover"
-                  />
-                  <AvatarFallback className="bg-emerald-600 text-white font-bold">
-                    {nomeUsuario?.substring(0, 2).toUpperCase() || 'FT'}
-                  </AvatarFallback>
-                </Avatar>
+            <button
+              type="button"
+              className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-2 text-left outline-none ring-sidebar-ring transition-all duration-300 hover:bg-emerald-500/10 focus-visible:ring-2"
+            >
+              <Avatar className="h-10 w-10 shrink-0 rounded-md border border-emerald-500/20">
+                <AvatarImage
+                  src={profileAvatarSrc}
+                  alt=""
+                  className="h-full w-full rounded-md object-cover"
+                />
+                <AvatarFallback className="rounded-md bg-emerald-600 text-sm font-bold text-white">
+                  {(nomeUsuario || loginUsuario || 'FT').slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 overflow-hidden">
+                <span className="truncate text-[13px] font-semibold text-slate-100">
+                  {nomeUsuario || loginUsuario || 'Utilizador'}
+                </span>
+                {linhaSecundaria ? (
+                  <span
+                    className="truncate text-[11px] text-slate-400"
+                    title={linhaSecundaria}
+                  >
+                    {linhaSecundaria}
+                  </span>
+                ) : null}
+                <span className="truncate text-[10px] font-medium tracking-tight text-emerald-500/80">
+                  FinTrack · Premium
+                </span>
               </div>
-              <div className="flex flex-col justify-center overflow-hidden">
-                <div className="text-[13px] font-semibold text-slate-100 truncate">
-                  <span>{nomeUsuario}</span>
-                </div>
-                <div className="text-[10px] text-emerald-500/70 font-medium tracking-tighter">
-                  <span>FINTRACK @ PREMIUM</span>
-                </div>
-              </div>
-            </div>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="end" className="w-56 bg-slate-900 border-emerald-900/50 text-slate-200">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-medium leading-none text-slate-100">
+                  {nomeUsuario || loginUsuario}
+                </p>
+                {emailUsuario ? (
+                  <p className="truncate text-xs leading-none text-slate-400" title={emailUsuario}>
+                    {emailUsuario}
+                  </p>
+                ) : null}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-emerald-900/30" />
             <DropdownMenuGroup>
               <DropdownMenuItem className="hover:bg-emerald-500/10 hover:text-emerald-400">
                 Meu Perfil

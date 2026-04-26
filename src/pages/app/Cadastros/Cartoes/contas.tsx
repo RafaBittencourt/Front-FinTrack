@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
-import { 
-  Landmark, 
-  Wallet, 
-  TrendingUp, 
-  CheckCircle2, 
+import {
+  Landmark,
+  Wallet,
+  TrendingUp,
+  CheckCircle2,
   XCircle,
   LayoutGrid,
   CreditCard,
-  Plus,
-  Filter
 } from 'lucide-react'
 
 import { BreadcrumbComponent } from '@/components/breadcrumb'

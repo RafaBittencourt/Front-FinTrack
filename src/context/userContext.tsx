@@ -6,7 +6,10 @@ import React, {
   useState,
 } from 'react'
 
-import { api } from '@/lib/axios'
+import {
+  FINTRACK_PROVISIONAL_PERMISSIONS,
+  readFinTrackUsuario,
+} from '@/lib/fintrackSession'
 
 interface CurrentUserContextType {
   userId: number | null
@@ -15,7 +18,12 @@ interface CurrentUserContextType {
   tipoLicenca: number
   setToken: React.Dispatch<React.SetStateAction<string | null>>
   loading: boolean
+  /** Nome de exibição ou login (cabeçalho do utilizador). */
   nomeUsuario: string
+  emailUsuario: string | null
+  loginUsuario: string
+  /** URL da foto de perfil (`FinTrackUsuario.Profile`). */
+  profileUrl: string | null
 }
 
 interface IContextProps {
@@ -46,6 +54,9 @@ export function DataProvider({ children }: IContextProps) {
   const [userId, setUserId] = useState<number | null>(null)
   const [tipoLicenca, setTipoLicenca] = useState<number>(1)
   const [nomeUsuario, setNomeUsuario] = useState<string>('')
+  const [emailUsuario, setEmailUsuario] = useState<string | null>(null)
+  const [loginUsuario, setLoginUsuario] = useState<string>('')
+  const [profileUrl, setProfileUrl] = useState<string | null>(null)
   const [permissions, setPermissions] = useState<string[]>([])
   const [token, setToken] = useState<string | null>(
     localStorage.getItem('token') ? localStorage.getItem('token') : null,
@@ -53,24 +64,37 @@ export function DataProvider({ children }: IContextProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (token) {
-      api
-        .get(`${'api/services/app/ParametroSistema/GetAllSettings'}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        })
-        .then((response) => {
-          setUserId(response.data.result.usuarioId)
-          setTipoLicenca(response.data.result.tipoLicenca)
-          setNomeUsuario(response.data.result.nomeUsuario)
-          setPermissions(response.data.result.permissions)
-          setLoading(false)
-        })
-        .catch(() => {
-          setLoading(false)
-        })
-    } else {
+    if (!token) {
+      setUserId(null)
+      setNomeUsuario('')
+      setEmailUsuario(null)
+      setLoginUsuario('')
+      setProfileUrl(null)
+      setPermissions([])
       setLoading(false)
+      return
     }
+
+    const u = readFinTrackUsuario()
+    if (u) {
+      setUserId(u.id)
+      setNomeUsuario(u.nomeExibicao?.trim() || u.login)
+      setEmailUsuario(u.email?.trim() || null)
+      setLoginUsuario(u.login)
+      setProfileUrl(u.profile?.trim() || null)
+      setTipoLicenca(u.licencaId ?? 0)
+      setPermissions([...FINTRACK_PROVISIONAL_PERMISSIONS])
+      setLoading(false)
+      return
+    }
+
+    setUserId(null)
+    setNomeUsuario('')
+    setEmailUsuario(null)
+    setLoginUsuario('')
+    setProfileUrl(null)
+    setPermissions([])
+    setLoading(false)
   }, [token])
 
   return (
@@ -83,6 +107,9 @@ export function DataProvider({ children }: IContextProps) {
         loading,
         tipoLicenca,
         nomeUsuario,
+        emailUsuario,
+        loginUsuario,
+        profileUrl,
       }}
     >
       {children}
